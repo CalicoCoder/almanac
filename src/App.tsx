@@ -1,7 +1,13 @@
+import { useSelectedDate } from './hooks/useSelectedDate'
+import { DateNavigator } from './components/DateNavigator'
+
 function App() {
+  const selectedDate = useSelectedDate()
+
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <h1 className="text-3xl font-semibold">Hello, Almanac</h1>
+    <div className="min-h-screen p-8">
+      <h1 className="mb-6 text-center text-3xl font-semibold">Almanac</h1>
+      <DateNavigator {...selectedDate} />
     </div>
   )
 }
