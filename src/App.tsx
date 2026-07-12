@@ -2,6 +2,7 @@ import { useSelectedDate } from './hooks/useSelectedDate'
 import { DateNavigator } from './components/DateNavigator'
 import { OnThisDayList } from './components/OnThisDayList'
 import { ApodCard } from './components/ApodCard'
+import { WeatherCard } from './components/WeatherCard'
 
 function App() {
   const selectedDate = useSelectedDate()
@@ -12,6 +13,9 @@ function App() {
       <DateNavigator {...selectedDate} />
       <div className="mt-8">
         <ApodCard isoDate={selectedDate.isoDate} />
+      </div>
+      <div className="mt-8">
+        <WeatherCard isoDate={selectedDate.isoDate} />
       </div>
       <div className="mt-8">
         <OnThisDayList month={selectedDate.month} day={selectedDate.day} />
