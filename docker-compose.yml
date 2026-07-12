@@ -1,0 +1,8 @@
+services:
+  almanac:
+    build:
+      context: .
+      args:
+        VITE_NASA_API_KEY: ${VITE_NASA_API_KEY:-DEMO_KEY}
+    ports:
+      - "3000:80"
