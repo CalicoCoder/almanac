@@ -1,5 +1,7 @@
 import {useOnThisDay} from '../hooks/useOnThisDay'
 import type {OnThisDayEvent} from '../api/onThisDay'
+import {BookmarkButton} from './BookmarkButton'
+import type {EventBookmark, PersonBookmark} from '../types/bookmark'
 
 interface OnThisDayListProps {
     month: string
@@ -7,8 +9,24 @@ interface OnThisDayListProps {
     year: string
 }
 
-function WikipediaPersonCard({event}: { event: OnThisDayEvent }) {
+function WikipediaPersonCard({event, type, month, day}: {
+    event: OnThisDayEvent
+    type: 'birth' | 'death'
+    month: string
+    day: string
+}) {
     const page = event.pages[0] // Assuming there must be a page or else their life/death wouldn't be in Wiki API
+
+    const bookmark: PersonBookmark = {
+        id: `${type}-${event.year}-${month}-${day}-${page.title}`,
+        type,
+        date: `${month}/${day}/${event.year}`,
+        year: event.year,
+        name: page.normalizedtitle ?? page.title,
+        description: page.description,
+        thumbnailUrl: page.thumbnail?.source,
+        pageUrl: page.content_urls!.desktop.page,
+    }
 
     return (
         <li className="flex flex-col items-center gap-3 rounded-md border border-gray-300 p-3 sm:flex-row sm:items-start dark:border-gray-600">
@@ -26,14 +44,17 @@ function WikipediaPersonCard({event}: { event: OnThisDayEvent }) {
                     className="rounded h-24 w-24 object-cover"
                 />
             )}
-            <div className="text-center sm:text-left">
-                <a
-                    href={page.content_urls!.desktop.page}
-                    target="_blank"
-                    className="font-medium underline"
-                >
-                    {page.normalizedtitle ?? page.title}
-                </a>
+            <div className="w-full text-center sm:text-left">
+                <div className="flex items-center justify-center gap-2 sm:justify-start">
+                    <a
+                        href={page.content_urls!.desktop.page}
+                        target="_blank"
+                        className="font-medium underline"
+                    >
+                        {page.normalizedtitle ?? page.title}
+                    </a>
+                    <BookmarkButton bookmark={bookmark}/>
+                </div>
 
                 {page?.description && <p className="text-sm text-gray-400">{page.description}</p>}
             </div>
@@ -64,11 +85,23 @@ export function OnThisDayList({month, day, year}: OnThisDayListProps) {
                 <p className="mb-6 text-gray-400">Nothing happened at all on this date.</p>
             ) : (
                 <ul className="mb-6 space-y-2">
-                    {events.map((event, i) => (
-                        <li key={i}
-                            className="rounded-md border border-gray-300 p-3 dark:border-gray-600"
-                        >{event.text}</li>
-                    ))}
+                    {events.map((event, i) => {
+                        const bookmark: EventBookmark = {
+                            id: `event-${event.year}-${month}-${day}-${i}`,
+                            type: 'event',
+                            date: `${month}/${day}/${event.year}`,
+                            year: event.year,
+                            text: event.text,
+                        }
+                        return (
+                            <li key={i}
+                                className="flex items-center justify-between gap-3 rounded-md border border-gray-300 p-3 dark:border-gray-600"
+                            >
+                                <span>{event.text}</span>
+                                <BookmarkButton bookmark={bookmark}/>
+                            </li>
+                        )
+                    })}
                 </ul>
             )}
 
@@ -78,7 +111,7 @@ export function OnThisDayList({month, day, year}: OnThisDayListProps) {
             ) : (
                 <ul className="mb-6 space-y-4">
                     {births.map((event, i) => (
-                        <WikipediaPersonCard key={i} event={event}/>
+                        <WikipediaPersonCard key={i} event={event} type="birth" month={month} day={day}/>
                     ))}
                 </ul>
             )}
@@ -91,7 +124,7 @@ export function OnThisDayList({month, day, year}: OnThisDayListProps) {
             ) : (
                 <ul className="mb-6 space-y-4">
                     {deaths.map((event, i) => (
-                        <WikipediaPersonCard key={i} event={event}/>
+                        <WikipediaPersonCard key={i} event={event} type="death" month={month} day={day}/>
                     ))}
                 </ul>
             )}

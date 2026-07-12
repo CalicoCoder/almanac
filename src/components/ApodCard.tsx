@@ -1,4 +1,6 @@
 import { useApod } from '../hooks/useApod'
+import { BookmarkButton } from './BookmarkButton'
+import type { ApodBookmark } from '../types/bookmark'
 
 interface ApodCardProps {
   isoDate: string
@@ -20,9 +22,21 @@ export function ApodCard({ isoDate }: ApodCardProps) {
     )
   }
 
+  const bookmark: ApodBookmark = {
+    id: `apod-${data.date}`,
+    type: 'apod',
+    date: data.date,
+    title: data.title,
+    imageUrl: data.url,
+    explanation: data.explanation,
+  }
+
   return (
     <section className="mx-auto max-w-2xl rounded-md border border-gray-300 p-3 dark:border-gray-600">
-      <h2 className="mb-3 text-xl font-bold">Astronomy Photo of the Day</h2>
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="text-xl font-bold">Astronomy Photo of the Day</h2>
+        <BookmarkButton bookmark={bookmark} />
+      </div>
       <h3 className="mb-2 text-l italic">{data.title}</h3>
 
       {data.media_type === 'image' ? (
