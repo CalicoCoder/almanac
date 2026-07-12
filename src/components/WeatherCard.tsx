@@ -57,6 +57,10 @@ const WEATHER_DESCRIPTIONS: Record<number, string> = {
 export function WeatherCard({ isoDate }: WeatherCardProps) {
   const { data, isLoading, isError } = useWeather(isoDate)
 
+  if (Number(isoDate.split('-')[0]) < 1940) {
+    return <p className="text-center text-red-500">No weather data available prior to 1940.</p>
+  }
+
   if (isLoading) {
     return <p className="text-center">Loading weather...</p>
   }

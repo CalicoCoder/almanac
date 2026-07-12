@@ -18,7 +18,7 @@ function App() {
         <WeatherCard isoDate={selectedDate.isoDate} />
       </div>
       <div className="mt-8">
-        <OnThisDayList month={selectedDate.month} day={selectedDate.day} />
+        <OnThisDayList month={selectedDate.month} day={selectedDate.day} year={selectedDate.year} />
       </div>
     </div>
   )

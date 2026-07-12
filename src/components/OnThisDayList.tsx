@@ -4,13 +4,14 @@ import type {OnThisDayEvent} from '../api/onThisDay'
 interface OnThisDayListProps {
     month: string
     day: string
+    year: string
 }
 
 function WikipediaPersonCard({event}: { event: OnThisDayEvent }) {
     const page = event.pages[0] // Assuming there must be a page or else their life/death wouldn't be in Wiki API
 
     return (
-        <li className="flex flex-col items-start gap-3 rounded-md border border-gray-300 p-3 sm:flex-row dark:border-gray-600">
+        <li className="flex flex-col items-center gap-3 rounded-md border border-gray-300 p-3 sm:flex-row sm:items-start dark:border-gray-600">
             {page?.thumbnail && (
                 <img
                     src={page.thumbnail.source}
@@ -25,7 +26,7 @@ function WikipediaPersonCard({event}: { event: OnThisDayEvent }) {
                     className="rounded h-24 w-24 object-cover"
                 />
             )}
-            <div>
+            <div className="text-center sm:text-left">
                 <a
                     href={page.content_urls!.desktop.page}
                     target="_blank"
@@ -40,9 +41,7 @@ function WikipediaPersonCard({event}: { event: OnThisDayEvent }) {
     )
 }
 
-//TODO: Consider grouping by year for each category
-//TODO: Make the limit (currently 5) configurable by count or maybe by how many years back to go
-export function OnThisDayList({month, day}: OnThisDayListProps) {
+export function OnThisDayList({month, day, year}: OnThisDayListProps) {
     const {data, isLoading, isError} = useOnThisDay(month, day)
 
     if (isLoading) {
@@ -53,30 +52,49 @@ export function OnThisDayList({month, day}: OnThisDayListProps) {
         return <p className="text-center text-red-500">Failed to load history for this date.</p>
     }
 
+    const targetYear = Number(year)
+    const events = data.events.filter((event) => event.year === targetYear)
+    const births = data.births.filter((event) => event.year === targetYear)
+    const deaths = data.deaths.filter((event) => event.year === targetYear)
+
     return (
         <section className="mx-auto max-w-2xl">
-            <h2 className="mb-2 text-xl font-bold">Historical Events on {month}/{day}</h2>
-            <ul className="mb-6 space-y-2">
-                {data.events.slice(0, 5).map((event, i) => (
-                    <li key={i}>
-                        <span className="font-bold">{event.year}</span> — {event.text}
-                    </li>
-                ))}
-            </ul>
+            <h2 className="mb-2 text-xl font-bold">Historical Events on {month}/{day}/{year}</h2>
+            {events.length === 0 ? (
+                <p className="mb-6 text-gray-400">Nothing happened at all on this date.</p>
+            ) : (
+                <ul className="mb-6 space-y-2">
+                    {events.map((event, i) => (
+                        <li key={i}
+                            className="rounded-md border border-gray-300 p-3 dark:border-gray-600"
+                        >{event.text}</li>
+                    ))}
+                </ul>
+            )}
 
-            <h2 className="mb-2 text-xl font-bold">Births on {month}/{day}</h2>
-            <ul className="mb-6 space-y-4">
-                {data.births.slice(0, 5).map((event, i) => (
-                    <WikipediaPersonCard key={i} event={event}/>
-                ))}
-            </ul>
+            <h2 className="mb-2 text-xl font-bold">Births on {month}/{day}/{year}</h2>
+            {births.length === 0 ? (
+                <p className="mb-6 text-gray-400">Absolutely no one was born on this day.</p>
+            ) : (
+                <ul className="mb-6 space-y-4">
+                    {births.map((event, i) => (
+                        <WikipediaPersonCard key={i} event={event}/>
+                    ))}
+                </ul>
+            )}
 
-            <h2 className="mb-2 text-xl font-bold">Deaths on {month}/{day}</h2>
-            <ul className="mb-6 space-y-4">
-                {data.deaths.slice(0, 5).map((event, i) => (
-                    <WikipediaPersonCard key={i} event={event}/>
-                ))}
-            </ul>
+            <h2 className="mb-2 text-xl font-bold">Deaths on {month}/{day}/{year}</h2>
+            {deaths.length === 0 ? (
+                <p className="mb-6 text-gray-400">
+                    Not a single person died on this day, it was widely celebrated.
+                </p>
+            ) : (
+                <ul className="mb-6 space-y-4">
+                    {deaths.map((event, i) => (
+                        <WikipediaPersonCard key={i} event={event}/>
+                    ))}
+                </ul>
+            )}
         </section>
     )
 }

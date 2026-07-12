@@ -5,14 +5,19 @@ interface ApodCardProps {
 }
 
 export function ApodCard({ isoDate }: ApodCardProps) {
-  const { data, isLoading, isError } = useApod(isoDate)
+  const { data, isLoading, isError, error } = useApod(isoDate)
 
   if (isLoading) {
     return <p className="text-center">Loading astronomy picture...</p>
   }
 
   if (isError || !data) {
-    return <p className="text-center text-red-500">No astronomy picture available for this date.</p>
+    return (
+      <div className="text-center text-red-500">
+        <p>No astronomy picture available for this date.</p>
+        {error instanceof Error && <p className="text-sm">{error.message}</p>}
+      </div>
+    )
   }
 
   return (

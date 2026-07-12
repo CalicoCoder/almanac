@@ -8,6 +8,11 @@ export interface ApodResponse {
   copyright?: string
 }
 
+interface ApodErrorResponse {
+  code: number
+  msg: string
+}
+
 export async function fetchApod(isoDate: string): Promise<ApodResponse> {
   const apiKey = import.meta.env.VITE_NASA_API_KEY ?? 'DEMO_KEY'
   const res = await fetch(
@@ -15,7 +20,8 @@ export async function fetchApod(isoDate: string): Promise<ApodResponse> {
   )
 
   if (!res.ok) {
-    throw new Error(`NASA APOD request failed: ${res.status}`)
+    const body: ApodErrorResponse = await res.json()
+    throw new Error(body.msg ?? `NASA APOD request failed: ${res.status}`)
   }
 
   return res.json()
