@@ -71,11 +71,11 @@ For example the weather section is keyed by both the selected date and the resol
 
 This also means each card's loading and error states are fully independent, a failed APOD lookup (a pre-1995 date) doesn't block the Weather or On This Day cards from rendering their own data as soon as it's ready.
 
-**Bookmark Functionality**: 
+## Bookmark Functionality 
 
 Persisted bookmark data as JSON collection to `localStorage` via a `useBookmarks` hook, shared through React Context (`BookmarksProvider`). I did it this way to make use of the existing stack without additional libraries. 
 
-**Tradeoffs / what I'd do differently with more time**: 
+## Tradeoffs / what I'd do differently with more time
 * Add automated tests
 * Utilize some sort of library like Material UI to provide basic components like dialogs or accordions
 * Implement the video APOD on the NASA API
