@@ -34,10 +34,10 @@ function App() {
         <>
           <DateNavigator {...selectedDate} />
           <div className="mt-8">
-            <ApodCard isoDate={selectedDate.isoDate} />
+            <WeatherCard isoDate={selectedDate.isoDate} />
           </div>
           <div className="mt-8">
-            <WeatherCard isoDate={selectedDate.isoDate} />
+            <ApodCard isoDate={selectedDate.isoDate} />
           </div>
           <div className="mt-8">
             <OnThisDayList month={selectedDate.month} day={selectedDate.day} year={selectedDate.year} />

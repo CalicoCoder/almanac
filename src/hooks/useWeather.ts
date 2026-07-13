@@ -1,13 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
 import { fetchWeather, getLocation } from '../api/weather'
 
-export function useWeather(isoDate: string) {
+interface Coordinates {
+  latitude: number
+  longitude: number
+}
+
+export function useWeather(isoDate: string, location: Coordinates | null) {
   const year = Number(isoDate.split('-')[0])
 
   return useQuery({
-    queryKey: ['weather', isoDate],
+    queryKey: ['weather', isoDate, location?.latitude, location?.longitude],
     queryFn: async () => {
-      const { latitude, longitude } = await getLocation()
+      const { latitude, longitude } = location ?? (await getLocation())
       const weather = await fetchWeather(isoDate, latitude, longitude)
       return { weather, latitude, longitude }
     },

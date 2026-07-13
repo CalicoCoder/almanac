@@ -11,12 +11,12 @@ export interface WeatherResponse {
   }
 }
 
-const FALLBACK_LOCATION = { latitude: 51.5074, longitude: -0.1278 } // London
+export const FALLBACK_LOCATION = { latitude: 51.5074, longitude: -0.1278 } // London
 
-export function getLocation(): Promise<{ latitude: number; longitude: number }> {
-  return new Promise((resolve) => {
+export function getBrowserLocation(): Promise<{ latitude: number; longitude: number }> {
+  return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      resolve(FALLBACK_LOCATION)
+      reject(new Error('Geolocation is not supported by this browser.'))
       return
     }
 
@@ -27,9 +27,13 @@ export function getLocation(): Promise<{ latitude: number; longitude: number }> 
           longitude: position.coords.longitude,
         })
       },
-      () => resolve(FALLBACK_LOCATION),
+      (err) => reject(new Error(err.message || 'Unable to retrieve your location.')),
     )
   })
+}
+
+export function getLocation(): Promise<{ latitude: number; longitude: number }> {
+  return getBrowserLocation().catch(() => FALLBACK_LOCATION)
 }
 
 export function getTodayIsoDate(): string {
